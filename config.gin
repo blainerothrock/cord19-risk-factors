@@ -1,0 +1,9 @@
+train.max_epochs=100
+train.batch_size=32
+train.learning_rate=0.1
+train.context_window=35
+
+LM.embedding_dim=100
+LM.hidden_dim=64
+LM.num_lstm_layers=3
+LM.bidirectional_lstm=True
