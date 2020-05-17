@@ -1,6 +1,7 @@
 train.max_epochs=100
 train.batch_size=32
 train.learning_rate=0.1
+train.momentum=0.8
 train.context_window=35
 
 LM.embedding_dim=100
