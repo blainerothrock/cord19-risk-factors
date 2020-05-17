@@ -1,4 +1,5 @@
 import os, gin
+from datetime import datetime
 import numpy as np
 import torch, torchtext
 from torch.utils.tensorboard import SummaryWriter
@@ -8,7 +9,7 @@ from ignite.metrics import Loss
 from model import LM
 
 @gin.configurable()
-def train(max_epochs, batch_size, learning_rate, momentum, context_window):
+def train(id, max_epochs, batch_size, learning_rate, momentum, context_window, model_path):
 
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
@@ -24,7 +25,8 @@ def train(max_epochs, batch_size, learning_rate, momentum, context_window):
     trainer = create_engine(model, optimizer, loss_fn, device)
     evaluator = create_evaluator(model, metrics={'nll': Loss(loss_fn)}, device=device)
 
-    writer = SummaryWriter()
+    id = '{}_{}'.format(id, datetime.now().strftime('%M%d%Y-%H%m'))
+    writer = SummaryWriter('runs/{}'.format(id))
 
     @trainer.on(Events.ITERATION_COMPLETED)
     def log_iter_loss(engine):
@@ -60,7 +62,12 @@ def train(max_epochs, batch_size, learning_rate, momentum, context_window):
         perplexity = np.exp(loss)
         writer.add_scalar('Loss/test', loss, epoch)
         writer.add_scalar('Perplexity/test', perplexity, epoch)
-        print('  - test loss:  %.2f' % loss)
+        print('  - test loss:   %.2f' % loss)
+
+        # save model
+        if not os.path.isdir(model_path):
+            os.mkdir(model_path)
+        torch.save(model.state_dict(), os.path.join(model_path, '{}.pt'.format(id)))
 
     trainer.run(train_iter, max_epochs=max_epochs)
 
