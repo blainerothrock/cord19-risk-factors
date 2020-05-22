@@ -19,7 +19,8 @@ def train(id, max_epochs, batch_size, learning_rate, momentum, context_window, m
     vocab_size = len(train_iter.dataset.fields['text'].vocab)
 
     model = LM(vocab_size=vocab_size)
-    loss_fn = torch.nn.NLLLoss()
+    # loss_fn = torch.nn.NLLLoss()
+    loss_fn = torch.nn.CrossEntropyLoss()
     optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate, momentum=momentum)
 
     trainer = create_engine(model, optimizer, loss_fn, device)

@@ -20,6 +20,8 @@ def create_engine(model, optimizer, loss_fn, device):
 
         return loss.item()
 
+    e = Engine(_update)
+    e.state_dict()
     return Engine(_update)
 
 

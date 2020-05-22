@@ -32,5 +32,4 @@ class LM(nn.Module):
         X = self.drop(X)
         X = self.linear(X)
         X = X.view(-1, self.vocab_size)
-        X = F.log_softmax(X, dim=1)
         return X
