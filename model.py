@@ -12,7 +12,11 @@ class LM(nn.Module):
         self.vocab_size = vocab_size
 
         self.drop = nn.Dropout(dropout)
-        self.embedding_layer = nn.Embedding(vocab_size, embedding_dim)
+        self.embeddings = nn.Embedding(vocab_size, embedding_dim)
+
+        self.hidden_state = None
+        self.embedding = None
+
         self.lstm = nn.LSTM(
             input_size=embedding_dim,
             hidden_size=hidden_dim,
@@ -27,9 +31,15 @@ class LM(nn.Module):
             self.linear = nn.Linear(hidden_dim, vocab_size)
 
     def forward(self, seq):
-        X = self.drop(self.embedding_layer(seq))
+        embedding = self.embeddings(seq)
+        self.embedding = embedding
+
+        X = self.drop(embedding)
         X, lstm_hidden_state = self.lstm(X)
+        self.hidden_state = lstm_hidden_state[0][-1]
+
         X = self.drop(X)
         X = self.linear(X)
         X = X.view(-1, self.vocab_size)
+        X = F.log_softmax(X, dim=1)
         return X

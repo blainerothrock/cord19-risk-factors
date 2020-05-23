@@ -1,12 +1,14 @@
 train.id='run01'
-train.max_epochs=100
+train.max_epochs=1
 train.batch_size=32
 train.learning_rate=0.1
 train.momentum=0.8
-train.context_window=100
+train.context_window=5
 train.model_path='./models'
 
 LM.embedding_dim=300
 LM.hidden_dim=300
-LM.num_lstm_layers=3
-LM.bidirectional_lstm=True
+LM.num_lstm_layers=6
+LM.bidirectional_lstm=False
+
+capture_embeddings_and_state.train_file='./.data/countries_train.txt'
