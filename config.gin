@@ -1,9 +1,9 @@
 train.id='run01'
-train.max_epochs=1
-train.batch_size=32
+train.max_epochs=100
+train.batch_size=64
 train.learning_rate=0.1
 train.momentum=0.8
-train.context_window=5
+train.context_window=100
 train.model_path='./models'
 
 LM.embedding_dim=300
