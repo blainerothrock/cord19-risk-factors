@@ -1,0 +1,12 @@
+old
+asthma
+lung
+immune
+deficiency
+smoker
+aids
+obese
+diabetes
+kidney
+cardiomyopathy
+hypertension

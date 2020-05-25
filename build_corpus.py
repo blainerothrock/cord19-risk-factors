@@ -32,8 +32,8 @@ MAX_FILES = 5000
 TOKEN_FREQUENCY = 3
 
 TRAIN_SPLIT = .8
-VALIDATION_SPLIT = 0
-TEST_SPLIT = .2
+VALIDATION_SPLIT = .1
+TEST_SPLIT = .1
 
 def consolidate(meta_data):
     '''
