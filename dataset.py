@@ -5,7 +5,8 @@ from torchtext.datasets import WikiText2, LanguageModelingDataset
 
 class Cord19(LanguageModelingDataset):
     """
-    REQUIREMENTS: needs to have folder structure: cord19_data/cord19/cord19/train_tokens.txt
+    REQUIREMENTS: needs to have folder structure: cord19_data/cord19/cord19/<train/validation/test>_tokens.txt.
+    Unzip corpus.json.zip to get corpus.json and then run json_to_txt.py to create the above folder and files ^
     """
 
     name = 'cord19'
