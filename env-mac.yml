@@ -1,6 +1,7 @@
 name: cord19
 channels:
   - pytorch
+  - anaconda
   - defaults
 dependencies:
   - absl-py=0.9.0=py37_0
@@ -27,6 +28,7 @@ dependencies:
   - mkl_random=1.1.0=py37ha771720_0
   - ncurses=6.2=h0a44026_1
   - ninja=1.9.0=py37h04f5b5a_0
+  - nltk=3.4.5=py37_0
   - numpy=1.18.1=py37h7241aed_0
   - numpy-base=1.18.1=py37h6575580_1
   - openssl=1.1.1g=h1de35cc_0
@@ -55,5 +57,5 @@ dependencies:
     - future==0.18.2
     - gin-config==0.3.0
     - torchsummary==1.5.1
-prefix: /usr/local/anaconda3/envs/cord19
+prefix: /Users/grantgasser/anaconda3/envs/cord19
 

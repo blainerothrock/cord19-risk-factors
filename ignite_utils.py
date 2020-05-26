@@ -2,7 +2,7 @@ from ignite.engine import Engine
 import torch
 
 
-def create_engine(model, optimizer, loss_fn, device):
+def create_engine(model, optimizer, loss_fn, device, vocab):
     model.to(device)
 
     def _update(engine, batch):
@@ -10,7 +10,7 @@ def create_engine(model, optimizer, loss_fn, device):
         model.zero_grad()
 
         seq = batch.text.to(device)
-        target = batch.target.view(-1).to(device)
+        target = batch.target.flatten().to(device)
 
         output = model(seq)
 
@@ -20,8 +20,6 @@ def create_engine(model, optimizer, loss_fn, device):
 
         return loss.item()
 
-    e = Engine(_update)
-    e.state_dict()
     return Engine(_update)
 
 

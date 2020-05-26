@@ -4,9 +4,11 @@ import numpy as np
 import torch, torchtext
 from torch.utils.tensorboard import SummaryWriter
 from ignite.engine import create_supervised_evaluator, Events
+from ignite.handlers import ModelCheckpoint
 from ignite_utils import create_engine, create_evaluator
 from ignite.metrics import Loss
 from model import LM
+from capture_embeddings import capture_embeddings_and_state
 
 @gin.configurable()
 def train(id, max_epochs, batch_size, learning_rate, momentum, context_window, model_path):
@@ -19,15 +21,17 @@ def train(id, max_epochs, batch_size, learning_rate, momentum, context_window, m
     vocab_size = len(train_iter.dataset.fields['text'].vocab)
 
     model = LM(vocab_size=vocab_size)
-    # loss_fn = torch.nn.NLLLoss()
-    loss_fn = torch.nn.CrossEntropyLoss()
+    loss_fn = torch.nn.NLLLoss()
     optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate, momentum=momentum)
 
-    trainer = create_engine(model, optimizer, loss_fn, device)
+    trainer = create_engine(model, optimizer, loss_fn, device, vocab)
     evaluator = create_evaluator(model, metrics={'nll': Loss(loss_fn)}, device=device)
 
-    id = '{}_{}'.format(id, datetime.now().strftime('%M%d%Y-%H%m'))
+    id = '{}_{}'.format(id, datetime.now().strftime('%d_%m_%Y-%H_%M_%S'))
     writer = SummaryWriter('runs/{}'.format(id))
+
+    checkpoint_handler = ModelCheckpoint(model_path, id, n_saved=1, create_dir=True, require_empty=False)
+    trainer.add_event_handler(Events.EPOCH_COMPLETED, checkpoint_handler, {'model': model})
 
     @trainer.on(Events.ITERATION_COMPLETED)
     def log_iter_loss(engine):
@@ -65,10 +69,9 @@ def train(id, max_epochs, batch_size, learning_rate, momentum, context_window, m
         writer.add_scalar('Perplexity/test', perplexity, epoch)
         print('  - test loss:   %.2f' % loss)
 
-        # save model
-        if not os.path.isdir(model_path):
-            os.mkdir(model_path)
-        torch.save(model.state_dict(), os.path.join(model_path, '{}.pt'.format(id)))
+    @trainer.on(Events.COMPLETED)
+    def capture(engine):
+        capture_embeddings_and_state(id, checkpoint_handler.last_checkpoint, vocab.itos, writer, context_window, device=device)
 
     trainer.run(train_iter, max_epochs=max_epochs)
 
