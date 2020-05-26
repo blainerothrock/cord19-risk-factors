@@ -41,6 +41,7 @@ def find_topic_tokens(run_name, dim, hold_out_file='./.data/countries_test.txt',
 
     count = 0
     sim_labels = {}
+    label_freqs = {}
 
     dist_f = open('./results/{}_similarity.csv'.format(run_name), 'w')
     fieldnames = ['iter', 'token', 'similarity', 'is_hold_out']
@@ -62,6 +63,8 @@ def find_topic_tokens(run_name, dim, hold_out_file='./.data/countries_test.txt',
         dist = euclidean(hidden_state, mean_hidden_state)
         sim = np.exp( ( -( dist ** 2. ) ) / sigma )
 
+        label_freqs[label] = label_freqs.get(label, 0) + 1
+
         if label not in token_hidden_states_labels and sim > 0.9:
             if label not in sim_labels:
                 #     ''iter       token                    similarity     hold_out?''
@@ -77,17 +80,25 @@ def find_topic_tokens(run_name, dim, hold_out_file='./.data/countries_test.txt',
     dist_f.close()
 
     count_f = open('./results/{}_count.csv'.format(run_name), 'w')
-    fieldnames = ['token', 'count', 'is_hold_out']
+    fieldnames = ['token', 'count_matched', 'count_total', 'percent_matched', 'is_hold_out']
     count_writer = csv.DictWriter(count_f, fieldnames=fieldnames)
     count_writer.writeheader()
 
     print('token           count     hold_out?')
     print('---------------+---------+---------')
     for (label, count) in sorted(sim_labels.items(), key=lambda x: x[1], reverse=True):
-        if count > 3:
-            is_hold_out = True if label.lower() in hold_out else False
-            print('{:15s} {:5s} {:1s}'.format(label, str(count), '*' if is_hold_out else ''))
-            count_writer.writerow({'token': label, 'count': count, 'is_hold_out': is_hold_out})
+        is_hold_out = True if label.lower() in hold_out else False
+        print('{:15s} {:5s} {:1s}'.format(label, str(count), '*' if is_hold_out else ''))
+
+        total_count = label_freqs.get(label, 0)
+        percent = '{:.2f}'.format((count/total_count) * 100.)
+        count_writer.writerow({
+            'token': label,
+            'count_matched': count,
+            'count_total': label_freqs.get(label, 0),
+            'percent_matched': percent,
+            'is_hold_out': is_hold_out
+        })
 
 
         # if label not in token_embeddings_labels:
