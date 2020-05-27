@@ -4,6 +4,7 @@ import numpy as np
 from model import LM
 from sklearn.neighbors import NearestNeighbors
 from torch.utils.tensorboard import SummaryWriter
+from dataset import Cord19
 
 
 @gin.configurable()
@@ -14,7 +15,8 @@ def capture_embeddings_and_state(run_name, dim, train_file='./.data/countries_tr
         for tok in f.readlines():
             topic_tokens.append(tok.lower().strip('\n'))
 
-    train_iter, _, _ = torchtext.datasets.WikiText2.iters(batch_size=1, bptt_len=1)
+    # train_iter, _, _ = torchtext.datasets.WikiText2.iters(batch_size=1, bptt_len=1)
+    train_iter, val_iter, test_iter = Cord19.iters(batch_size=1, bptt_len=1)
     vocab = train_iter.dataset.fields['text'].vocab.itos
 
     device = torch.device('cuda' if torch.cuda else 'cpu')
@@ -77,7 +79,7 @@ def capture_embeddings_and_state(run_name, dim, train_file='./.data/countries_tr
 
 if __name__ == '__main__':
     capture_embeddings_and_state(
-        'wikitext2-bidirectional-50_25_05_2020-15_17_28',
-        dim=50,
-        writer=None,
-        train_file='./.data/punc-train.txt')
+        'cord19-100_26_05_2020-19_39_57',
+        dim=100,
+        writer=SummaryWriter('./runs/cord19-100_26_05_2020-19_39_57'),
+        train_file='./risk_factors.txt')

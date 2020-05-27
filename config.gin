@@ -1,11 +1,11 @@
-train.id='wikitext2-bidirectional-50'
+train.id='cord19-100'
 train.max_epochs=100
 train.batch_size=128
 train.learning_rate=0.01
 train.momentum=0.8
 train.model_path='./models'
 
-LM.embedding_dim=50
-LM.hidden_dim=50
+LM.embedding_dim=100
+LM.hidden_dim=100
 LM.num_lstm_layers=3
 LM.bidirectional_lstm=True

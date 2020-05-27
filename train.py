@@ -9,13 +9,15 @@ from ignite_utils import create_engine, create_evaluator
 from ignite.metrics import Loss
 from model import LM
 from capture_embeddings import capture_embeddings_and_state
+from dataset import Cord19
 
 @gin.configurable()
 def train(id, max_epochs, batch_size, learning_rate, momentum, model_path):
 
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
-    train_iter, val_iter, test_iter = torchtext.datasets.WikiText2.iters(batch_size=batch_size)
+    # train_iter, val_iter, test_iter = torchtext.datasets.WikiText2.iters(batch_size=batch_size)
+    train_iter, val_iter, test_iter = Cord19.iters(batch_size=batch_size)
 
     vocab = train_iter.dataset.fields['text'].vocab
     vocab_size = len(train_iter.dataset.fields['text'].vocab)

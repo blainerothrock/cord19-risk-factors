@@ -67,9 +67,9 @@ class Cord19(LanguageModelingDataset):
             device=device)
 
 
-# test it out
-train, val, test = Cord19.iters(batch_size=32, bptt_len=100)
-
-print(train)
-print(val)
-print(test)
+# # test it out
+# train, val, test = Cord19.iters(batch_size=32, bptt_len=100)
+#
+# print(train)
+# print(val)
+# print(test)

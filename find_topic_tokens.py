@@ -7,9 +7,10 @@ from model import LM
 from sklearn.neighbors import NearestNeighbors
 from scipy.spatial.distance import cosine, euclidean
 import csv
+from dataset import Cord19
 
 @gin.configurable()
-def find_topic_tokens(run_name, dim, hold_out_file='./.data/countries_test.txt', sigma=0.25):
+def find_topic_tokens(run_name, dim, hold_out_file='./.data/countries_test.txt', sigma=0.8):
 
     token_embeddings, token_embeddings_labels = torch.load('./models/{}_token_embeddings.pt'.format(run_name))
     token_hidden_states, token_hidden_states_labels = torch.load('./models/{}_token_hidden_state.pt'.format(run_name))
@@ -29,7 +30,8 @@ def find_topic_tokens(run_name, dim, hold_out_file='./.data/countries_test.txt',
         if run_name in file and '.pth' in file:
             model_file = './models/{}'.format(file)
 
-    train_iter, _, test_iter = torchtext.datasets.WikiText2.iters(batch_size=1, bptt_len=1)
+    # train_iter, _, test_iter = torchtext.datasets.WikiText2.iters(batch_size=1, bptt_len=1)
+    train_iter, val_iter, test_iter = Cord19.iters(batch_size=1, bptt_len=1)
     vocab = test_iter.dataset.fields['text'].vocab.itos
 
     device = torch.device('cuda' if torch.cuda else 'cpu')
@@ -131,4 +133,4 @@ def find_topic_tokens(run_name, dim, hold_out_file='./.data/countries_test.txt',
 
 
 if __name__ == '__main__':
-    find_topic_tokens('wikitext2-bidirectional-50_25_05_2020-15_17_28', dim=50, hold_out_file='./.data/punc-test.txt')
+    find_topic_tokens('cord19-100_26_05_2020-19_39_57', dim=100, hold_out_file='./risk_factors_holdout.txt')
