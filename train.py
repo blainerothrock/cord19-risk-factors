@@ -11,11 +11,11 @@ from model import LM
 from capture_embeddings import capture_embeddings_and_state
 
 @gin.configurable()
-def train(id, max_epochs, batch_size, learning_rate, momentum, context_window, model_path):
+def train(id, max_epochs, batch_size, learning_rate, momentum, model_path):
 
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
-    train_iter, val_iter, test_iter = torchtext.datasets.WikiText2.iters(batch_size=batch_size, bptt_len=context_window)
+    train_iter, val_iter, test_iter = torchtext.datasets.WikiText2.iters(batch_size=batch_size)
 
     vocab = train_iter.dataset.fields['text'].vocab
     vocab_size = len(train_iter.dataset.fields['text'].vocab)
@@ -69,9 +69,9 @@ def train(id, max_epochs, batch_size, learning_rate, momentum, context_window, m
         writer.add_scalar('Perplexity/test', perplexity, epoch)
         print('  - test loss:   %.2f' % loss)
 
-    @trainer.on(Events.COMPLETED)
-    def capture(engine):
-        capture_embeddings_and_state(id, checkpoint_handler.last_checkpoint, vocab.itos, writer, context_window, device=device)
+    # @trainer.on(Events.COMPLETED)
+    # def capture(engine):
+    #     capture_embeddings_and_state(id, writer=writer)
 
     trainer.run(train_iter, max_epochs=max_epochs)
 
