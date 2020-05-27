@@ -9,7 +9,7 @@ from scipy.spatial.distance import cosine, euclidean
 import csv
 
 @gin.configurable()
-def find_topic_tokens(run_name, dim, hold_out_file='./.data/countries_test.txt', sigma=0.5):
+def find_topic_tokens(run_name, dim, hold_out_file='./.data/countries_test.txt', sigma=0.25):
 
     token_embeddings, token_embeddings_labels = torch.load('./models/{}_token_embeddings.pt'.format(run_name))
     token_hidden_states, token_hidden_states_labels = torch.load('./models/{}_token_hidden_state.pt'.format(run_name))

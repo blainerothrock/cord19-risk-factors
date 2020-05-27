@@ -47,10 +47,9 @@ def capture_embeddings_and_state(run_name, dim, train_file='./.data/countries_tr
         _ = model(seq)
 
         if label.lower() in topic_tokens:
-            if label not in token_hidden_state_labels:
-                hidden_state = model.hidden_state.detach().flatten().cpu().numpy()
-                token_hidden_state.append(hidden_state)
-                token_hidden_state_labels.append(label)
+            hidden_state = model.hidden_state.detach().flatten().cpu().numpy()
+            token_hidden_state.append(hidden_state)
+            token_hidden_state_labels.append(label)
 
             if label not in token_labels:
                 token_embeddings.append(model.embedding.detach().cpu().numpy())
@@ -80,5 +79,5 @@ if __name__ == '__main__':
     capture_embeddings_and_state(
         'wikitext2-bidirectional-50_25_05_2020-15_17_28',
         dim=50,
-        writer=SummaryWriter('./runs/wikitext2-bidirectional-50_25_05_2020-15_17_28'),
+        writer=None,
         train_file='./.data/punc-train.txt')
