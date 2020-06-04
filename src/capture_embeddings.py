@@ -1,10 +1,8 @@
 import os, gin, torch
-import torchtext
 import numpy as np
-from model import LM
-from sklearn.neighbors import NearestNeighbors
+from src.utils.model import LM
 from torch.utils.tensorboard import SummaryWriter
-from dataset import Cord19
+from src.utils.dataset import Cord19
 
 
 @gin.configurable()
@@ -22,8 +20,8 @@ def capture_embeddings_and_state(run_name, dim, train_file='./.data/countries_tr
     device = torch.device('cuda' if torch.cuda else 'cpu')
 
     model_file = None
-    for file in os.listdir('./models'):
-        if run_name in file:
+    for file in os.listdir('models'):
+        if run_name in file and file.split('.')[-1] == 'pth':
             model_file = './models/{}'.format(file)
 
     model = LM(vocab_size=len(vocab), embedding_dim=dim, hidden_dim=dim, bidirectional_lstm=True).to(device)
@@ -81,5 +79,5 @@ if __name__ == '__main__':
     capture_embeddings_and_state(
         'cord19-100_26_05_2020-19_39_57',
         dim=100,
-        writer=SummaryWriter('./runs/cord19-100_26_05_2020-19_39_57'),
-        train_file='./risk_factors.txt')
+        writer=SummaryWriter('runs/cord19-100_26_05_2020-19_39_57'),
+        train_file='risk_factors.txt')

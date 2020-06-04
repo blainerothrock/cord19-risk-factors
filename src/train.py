@@ -1,15 +1,14 @@
-import os, gin
+import gin
 from datetime import datetime
 import numpy as np
-import torch, torchtext
+import torch
 from torch.utils.tensorboard import SummaryWriter
-from ignite.engine import create_supervised_evaluator, Events
+from ignite.engine import Events
 from ignite.handlers import ModelCheckpoint
-from ignite_utils import create_engine, create_evaluator
+from src.utils.ignite_utils import create_engine, create_evaluator
 from ignite.metrics import Loss
-from model import LM
-from capture_embeddings import capture_embeddings_and_state
-from dataset import Cord19
+from src.utils.model import LM
+from src.utils.dataset import Cord19
 
 @gin.configurable()
 def train(id, max_epochs, batch_size, learning_rate, momentum, model_path):
