@@ -1,6 +1,8 @@
-models/
-runs/
-.data/
+.DS_Store
+
+src/models/
+src/runs/
+src/.data/
 .idea/
 
 # Byte-compiled / optimized / DLL files
@@ -134,5 +136,5 @@ dmypy.json
 .pyre/
 
 # data
-cord19_data/
+src/cord19_data/
 /corpus.json
