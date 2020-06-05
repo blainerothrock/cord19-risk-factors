@@ -1,6 +1,7 @@
 old
 asthma
 lung
+lungs
 immune
 deficiency
 smoker
@@ -10,3 +11,18 @@ diabetes
 kidney
 cardiomyopathy
 hypertension
+copd
+bronchitis
+scd
+iron
+85
+age
+flu
+respiratory
+pregnancy
+male
+transplant
+clots
+bacterial
+viral
+touching

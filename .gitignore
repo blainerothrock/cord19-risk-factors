@@ -136,5 +136,9 @@ dmypy.json
 .pyre/
 
 # data
-src/cord19_data/
-/corpus.json
+.data/
+cord19_data/
+corpus.json
+*.db
+*.sqlite
+runs/

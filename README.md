@@ -44,3 +44,8 @@ and visualize.
     - Congenital heart disease 
     - Cardiomyopathies 
     - Pulmonary hypertension 
+    
+ ### Setting up sqlite
+ [csv to sqlite3](https://www.sqlitetutorial.net/sqlite-import-csv/)
+ 
+ 

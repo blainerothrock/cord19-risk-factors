@@ -28,3 +28,13 @@ artery
 congenital
 cardiomyopathies
 pulmonary
+pneumonia
+throat
+emphysema
+gestational
+infection
+cd4
+ards
+transplantation
+travel
+6
