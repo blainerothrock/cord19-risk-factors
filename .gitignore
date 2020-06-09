@@ -1,6 +1,6 @@
 .DS_Store
 models/
-results/git ad
+results/
 runs/
 src/models/
 src/runs/
