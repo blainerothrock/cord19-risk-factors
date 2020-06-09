@@ -37,4 +37,10 @@ cd4
 ards
 transplantation
 travel
-6
+transplant
+clots
+diabetes
+kidney
+bronchitis
+scd
+iron

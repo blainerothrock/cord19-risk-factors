@@ -6,14 +6,15 @@ from src.utils.model import LM
 from scipy.spatial.distance import euclidean
 import csv
 from src.utils.dataset import Cord19
+from datetime import datetime
 
 @gin.configurable()
 def find_topic_tokens(run_name, dim, hold_out_file='./.data/countries_test.txt', sigma=0.8):
 
     token_hidden_states, token_hidden_states_labels = torch.load('./models/{}_token_hidden_state.pt'.format(run_name))
-
     token_hidden_states_labels_lower = [l.lower() for l in token_hidden_states_labels]
     uniq_labels = set(token_hidden_states_labels_lower)
+
     hiddens_state_means = {}
     for lbl in uniq_labels:
         indicies = np.where(np.array(token_hidden_states_labels_lower) == lbl)
@@ -43,18 +44,18 @@ def find_topic_tokens(run_name, dim, hold_out_file='./.data/countries_test.txt',
     model.load_state_dict(checkpoint)
     model.eval()
 
-    count = 0
-
     dist_f = open('./results/{}_similarity.csv'.format(run_name), 'w')
     fieldnames = ['iter', 'token', 'all_similarity', 'is_hold_out']
     fieldnames = fieldnames + [lbl for lbl in hiddens_state_means.keys()]
     dist_writer = csv.DictWriter(dist_f, fieldnames=fieldnames)
     dist_writer.writeheader()
 
-    print('iter         token                   similarity      hold_out?')
-    print('------------+-----------------------+---------------+---------')
+    # print('iter         token                   similarity      hold_out?')
+    # print('------------+-----------------------+---------------+---------')
+    count = 0
+    print('start: {}'.format(datetime.now()))
+
     for batch in train_iter:
-        count += 1
         seq = batch.text.to(device)
         label_idx = batch.target.flatten()[-1]
         label = vocab[label_idx.item()]
@@ -72,35 +73,20 @@ def find_topic_tokens(run_name, dim, hold_out_file='./.data/countries_test.txt',
         iter = str(count)
         token = label
         is_hold_out = True if label.lower() in hold_out else False
-        print('{:6s}       {:15s}         {:.5f}         {:1s}'.format(iter, token, sim_all, '*' if is_hold_out else ''))
+
+        # print('{:6s}       {:15s}         {:.5f}         {:1s}'.format(iter, token, sim_all, '*' if is_hold_out else ''))
         row = {'iter': iter, 'token': token, 'all_similarity': sim_all, 'is_hold_out': is_hold_out}
         for i, lbl in enumerate(hiddens_state_means.keys()):
             row[lbl] = sims[i]
+
         dist_writer.writerow(row)
+
+        count += 1
+        if count % 10000 == 0:
+            print('{}: processed: {}'.format(datetime.now(), count))
 
     dist_f.close()
 
-    # count_f = open('./results/{}_count.csv'.format(run_name), 'w')
-    # fieldnames = ['token', 'count_matched', 'count_total', 'percent_matched', 'is_hold_out']
-    # count_writer = csv.DictWriter(count_f, fieldnames=fieldnames)
-    # count_writer.writeheader()
-    #
-    # print('token           count     hold_out?')
-    # print('---------------+---------+---------')
-    # for (label, count) in sorted(sim_labels.items(), key=lambda x: x[1], reverse=True):
-    #     is_hold_out = True if label.lower() in hold_out else False
-    #     print('{:15s} {:5s} {:1s}'.format(label, str(count), '*' if is_hold_out else ''))
-    #
-    #     total_count = label_freqs.get(label, 0)
-    #     percent = '{:.2f}'.format((count/total_count) * 100.)
-    #     count_writer.writerow({
-    #         'token': label,
-    #         'count_matched': count,
-    #         'count_total': label_freqs.get(label, 0),
-    #         'percent_matched': percent,
-    #         'is_hold_out': is_hold_out
-    #     })
-
 
 if __name__ == '__main__':
-    find_topic_tokens('cord19-100_26_05_2020-19_39_57', dim=100, hold_out_file='risk_factors_holdout.txt')
+    find_topic_tokens('cord19-100_26_05_2020-19_39_57', dim=100, hold_out_file='src/risk_factors_holdout.txt')
