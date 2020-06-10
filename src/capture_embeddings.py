@@ -4,6 +4,7 @@ from src.utils.model import LM
 from torch.utils.tensorboard import SummaryWriter
 from src.utils.dataset import Cord19
 from datetime import datetime
+from torchsummary import summary
 
 @gin.configurable()
 def capture_embeddings_and_state(run_name, dim, train_file='./.data/countries_train.txt', writer=None):
@@ -25,6 +26,9 @@ def capture_embeddings_and_state(run_name, dim, train_file='./.data/countries_tr
     device = torch.device('cuda')
 
     model = LM(vocab_size=len(vocab), embedding_dim=dim, hidden_dim=dim, bidirectional_lstm=True).to(device)
+
+    summary(model, (128,))
+
     checkpoint = torch.load(model_file)
     model.load_state_dict(checkpoint)
     model.to(device)
@@ -46,7 +50,7 @@ def capture_embeddings_and_state(run_name, dim, train_file='./.data/countries_tr
         label_idx = batch.target.flatten()[-1]
         label = vocab[label_idx.item()]
 
-        _ = model(seq)
+        _ = model(seq, (1))
 
         if label.lower() in topic_tokens:
             hidden_state = model.hidden_state.detach().cpu().flatten().cpu().numpy()

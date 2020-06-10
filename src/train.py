@@ -78,5 +78,5 @@ def train(id, max_epochs, batch_size, learning_rate, momentum, model_path):
 
 
 if __name__ == '__main__':
-    gin.parse_config_file('config.gin')
+    gin.parse_config_file('src/config.gin')
     train()
